@@ -13,7 +13,8 @@ const imageStyle = (url) => {
     height: '75%',
     backgroundImage: `url(${url})`,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: '100%'
+    backgroundSize: '100%',
+    backgroundPostion:'center center'
   })
 }
 export default class BreedCard extends Component {

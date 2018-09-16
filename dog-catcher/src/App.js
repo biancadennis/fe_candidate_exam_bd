@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Button} from 'react-bootstrap'
 import Search from './Search'
 import BreedList from './BreedList'
 
@@ -23,8 +24,9 @@ export default class App extends Component {
     super(props);
     this.state = {
       loaded: false,
+      allBreeds: null,
       data: null,
-      chosenBreed: null
+      chosenBreed: ''
     };
   }
   render() {
@@ -36,7 +38,8 @@ export default class App extends Component {
 
     return (
       <div>
-        <Search breeds={this.state.data} chosenBreed={this.state.chosenBreed} updateChosenBreed={this.updateChosenBreed}/>
+        <Search breeds={this.state.allBreeds} chosenBreed={this.state.chosenBreed} updateChosenBreed={this.updateChosenBreed}/>
+        <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
         {this.renderMainView()}
       </div>
     );
@@ -45,22 +48,36 @@ export default class App extends Component {
   
   loadData = () => {
    this.state.loaded ? this.setState({loaded:false}) : null
-
-    //<BreedList breedName={'hound'} breed={this.state.data}/>
+   if(!this.state.chosenBreed){
     getAllBreeds().then(
-      data => this.setState({data: data.message, loaded: true})
+      data => this.setState({allBreeds: data.message, loaded: true})
     ).catch(reason => console.log(reason.message))
   }
+  }
+
   renderMainView = () => {
     const {chosenBreed, data} = this.state
     if(this.state.chosenBreed){
-      return <BreedList breedName={chosenBreed} breed={data}/>
+      return <BreedList breedName={chosenBreed} data={data}/>
     }
     return 'There are currently no breeds caught.Search above to catch some!'
   }
   updateChosenBreed = (breedName) => {
-    this.setState({chosenBreed: breedName})
-    this.loadData('breedName')
+    this.setState({chosenBreed: breedName}, this.loadBreedLinks(breedName))
+  }
+
+  loadBreedLinks = (breedName) => {
+    this.state.loaded ? this.setState({loaded: false}) : null
+    getChosenBreed(breedName).then(
+      data => this.setState({data: data.message, loaded: true})
+    ).catch(reason => console.log(reason.message))
+  }
+
+  getRandomBreed = () => {
+    const breeds = Object.keys(this.state.allBreeds)
+    const index = Math.floor(Math.random() * breeds.length)
+    const newBreed = breeds[index]
+    this.setState({chosenBreed: newBreed}, this.loadBreedLinks(newBreed))
   }
 }
 

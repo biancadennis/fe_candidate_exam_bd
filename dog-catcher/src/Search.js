@@ -14,23 +14,20 @@ export default class BreedList extends Component {
         return(
             <Downshift
                 onChange={selection => this.props.updateChosenBreed(selection)}
-                itemToString
-                ={item => (item ? item.value : '')}
+                itemToString={item => (item ? item.value : '')}
             >
                 {({
                     getInputProps,
                     getItemProps,
-                    getLabelProps,
                     getMenuProps,
                     isOpen,
                     inputValue,
                     highlightedIndex,
-                    selectedItem,
                 }) => (
                     <div>
-                        <input {...getInputProps()} value={this.props.chosenBreed} placeholder={'Enter a Breed to Catch'} />
+                        <input {...getInputProps()} value={this.state.chosenBreed} placeholder={'Enter a Breed to Catch'} />
                         <ul {...getMenuProps()}>
-                            {isOpen
+                            {isOpen && inputValue
                                 ? breedList
                                     .filter(breed => !inputValue || breed.includes(inputValue))
                                     .map((item, index) => (
@@ -45,7 +42,6 @@ export default class BreedList extends Component {
                                                     padding: '2px',
                                                     backgroundColor:
                                                         highlightedIndex === index ? 'lightgray' : 'white',
-                                                        fontWeight: selectedItem === item ? 'bold' : 'normal',
                                                 },
                                             })}
                                         >
