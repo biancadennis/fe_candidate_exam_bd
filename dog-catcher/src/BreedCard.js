@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Button from 'react-bootstrap/lib/Button';
+import {Button} from 'react-bootstrap'
+
 
 const cardStyle = {
   height: '300px',
@@ -27,8 +28,9 @@ const buttonStyle = {
 }
 export default class BreedCard extends Component {
   render() {
-    const {favorites, addToFavorites, url, breedName, removeFromData, index} = this.props
-    const inFavorites = favorites.includes(url)
+    const {favorites, addToFavorites, url, breedName, removeFromData, index, breed} = this.props
+    const urls = favorites.map(breed => breed.url)
+    const inFavorites = urls.includes(url)
     const buttonText = inFavorites ? 'In Favorites' : 'Save to Favorites'
     return (
       <div style={cardStyle}>
@@ -36,7 +38,7 @@ export default class BreedCard extends Component {
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <div>{breedName}</div>
           <div style={buttonStyle}>
-            <Button onClick={() => addToFavorites(url)} disabled={inFavorites}> {buttonText}</Button>
+            <Button onClick={() => addToFavorites(breed)} disabled={inFavorites}> {buttonText}</Button>
             <Button bsStyle="danger" onClick={()=>removeFromData(index)}>Delete</Button>
           </div>
         </div>

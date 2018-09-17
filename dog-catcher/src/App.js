@@ -11,7 +11,7 @@ async function getAllBreeds() {
 }
 
 async function getChosenBreed(breedName) {
-  const response = await fetch(`https://dog.ceo/api/breed/${breedName}/images`)
+  const response = await fetch(`https://dog.ceo/api/breed/${breedName}/images/random`)
   const json = await response.json()
   return json
 }
@@ -29,6 +29,7 @@ export default class App extends Component {
     };
   }
   render() {
+
     {if (!this.state.loaded){
       this.loadData()
       return <LoadingScreen />
@@ -40,7 +41,7 @@ export default class App extends Component {
         <ButtonToolbar style={{display: 'flex', justifyContent: 'center '}}>
           <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
           <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
-          <Button bsStyle='danger' onClick={() => this.setView('no-show')}>Clear All </Button>
+          <Button bsStyle='danger' onClick={() => this.setView('no-show')}>Clear </Button>
         </ButtonToolbar>
         {this.renderView()}
       </div>
@@ -65,19 +66,21 @@ export default class App extends Component {
           return this.renderMainView()
       case 'favorites':
         return this.renderFavorites()
-      default:
+      case 'no-show':
         return this.noShowView()
+      default:
+        return <LoadingScreen />
   }
   }
   renderMainView = () => {
-    const {chosenBreed, data, favorites} = this.state
-    return <BreedList removeFromData={this.removeFromData} addToFavorites={this.addToFavorites} breedName={chosenBreed} data={data} favorites={favorites}/>
+    const {chosenBreed, data, favorites, view} = this.state
+    return <BreedList view={view} removeFromData={this.removeFromData} addToFavorites={this.addToFavorites} breedName={chosenBreed} data={data} favorites={favorites}/>
   }
 
   renderFavorites = () => {
-    const {chosenBreed, favorites} = this.state
+    const {chosenBreed, favorites, view} = this.state
     if(favorites){
-      return <BreedList removeFromData={this.removeFromData} breedName={chosenBreed} data={favorites} favorites={favorites}/>
+      return <BreedList view={'favorites'} removeFromData={this.removeFromData} breedName={chosenBreed} data={favorites} favorites={favorites}/>
     }
     this.noShowView()
   }
@@ -96,30 +99,43 @@ export default class App extends Component {
   }
 
   loadBreedLinks = (breedName) => {
+    let dataUrls = []
+    if(this.state.data) {
+      dataUrls = this.state.data.map(breed => breed.url)
+    }
     if(this.state.loaded){
       this.setState({loaded: false})
     }
     getChosenBreed(breedName).then(
-      data => this.setState({data: data.message, loaded: true})
-    ).catch(reason => console.log(reason.message))
+      data => dataUrls.includes(data.message) ? this.getRandomBreed() :  data
+    ).then(
+      data => this.setState(
+        (state) =>({
+          data: state.data ? [{breedName: breedName, url: data.message}, ...state.data] : [{breedName: breedName, url: data.message}],
+          view: 'main-view',
+          loaded: 'true' 
+          })
+      )
+    ).catch(() => this.getRandomBreed())
   }
 
   getRandomBreed = () => {
     const breeds = Object.keys(this.state.allBreeds)
     const index = Math.floor(Math.random() * breeds.length)
     const newBreed = breeds[index]
-    this.setState({chosenBreed: newBreed, view: 'main-view'}, this.loadBreedLinks(newBreed))
+    this.setState({chosenBreed: newBreed}, this.loadBreedLinks(newBreed))
   }
   setView = (view) => {
     this.setState({view: view})
   }
-  addToFavorites = (link) => {
-    const newFavs = [...this.state.favorites, link]
+  addToFavorites = (newFav) => {
+    const newFavs = [newFav, ...this.state.favorites]
     this.setState({favorites: newFavs})
   }
 
   removeFromData = (i) => {
-    if (this.state.favorites.includes(this.state.data[i])){
+    const urls = this.state.favorites.map(breed => breed.url)
+    if (urls.includes(this.state.data[i].url)){
       const favoriteArray = this.arrayWithIndexRemoved(this.state.favorites, i)
       this.setState({favorites: favoriteArray})
     }

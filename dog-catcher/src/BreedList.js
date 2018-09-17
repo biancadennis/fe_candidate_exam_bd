@@ -3,14 +3,14 @@ import BreedCard from './BreedCard'
 
 export default class BreedList extends Component {
   render() {
-    const {data, breedName, addToFavorites, favorites, removeFromData} = this.props
+    const {data, addToFavorites, favorites, removeFromData, view} = this.props
     return (
       <div style={{display: 'flex', alignItems: 'center', flexDirection: 'column', marginTop: '10px'}}>
-        <div>Caught Breeds</div>
+        <div>{view === 'favorites' ? 'Favorites' : 'Caught Breeds'}</div>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'space-around',flexWrap:'wrap'}}>
-          {data.map((link, i) => {
+          {data.map((breed, i) => {
             console.log()
-            return <BreedCard removeFromData={removeFromData} addToFavorites={addToFavorites} favorites={favorites} key={link} url={link} breedName={breedName} index={i}/>
+            return <BreedCard removeFromData={removeFromData} breed={breed} addToFavorites={addToFavorites} favorites={favorites} key={breed.url} url={breed.url} breedName={breed.breedName} index={i}/>
           })}
         </div>
       </div>
