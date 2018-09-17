@@ -12,3 +12,13 @@ This repo contains an exercise intended for Front-End Engineers.
 ## Expectations
 1. Please take no more than 8 hours to work on this exercise. Complete as much as possible and then submit your solution.
 1. This exercise is meant to showcase how you work. With consideration to the time limit, do your best to treat it like a production system.
+
+# How To
+1. clone repo
+1. cd dog-catcher
+1. run yarn install
+1. run yarn start
+1. App will open on localhost: 3000
+
+#Assumptions
+1. Order added refers to order added to collection and not order added to database of breeds
