@@ -10,7 +10,7 @@ export default class LoadingScreen extends Component {
         margin: '100px auto'
     }
     return (
-      <img style={loadingStyle} src='https://www.iabc.com/wp-content/uploads/images/loading.gif'/>
+      <img style={loadingStyle} alt='loading' src='https://www.iabc.com/wp-content/uploads/images/loading.gif'/>
     );
   }
 }

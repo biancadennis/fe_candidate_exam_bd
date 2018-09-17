@@ -4,19 +4,13 @@ import Search from './Search'
 import BreedList from './BreedList'
 import LoadingScreen from './LoadingScreen'
 
-//ToDo:
-//create scroll to top
-//OOP
-
 async function getAllBreeds() {
-  //need to be able to pass in url
   const response = await fetch('https://dog.ceo/api/breeds/list/all')
   const json = await response.json()
   return json
 }
 
 async function getChosenBreed(breedName) {
-  //need to be able to pass in url
   const response = await fetch(`https://dog.ceo/api/breed/${breedName}/images`)
   const json = await response.json()
   return json
@@ -46,6 +40,7 @@ export default class App extends Component {
         <ButtonToolbar style={{display: 'flex', justifyContent: 'center '}}>
           <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
           <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
+          <Button bsStyle='danger' onClick={() => this.setView('no-show')}>Clear All </Button>
         </ButtonToolbar>
         {this.renderView()}
       </div>
@@ -54,7 +49,9 @@ export default class App extends Component {
 
   
   loadData = () => {
-   this.state.loaded ? this.setState({loaded:false}) : null
+    if(this.state.loaded){
+      this.setState({loaded: false})
+    }
     if(!this.state.chosenBreed){
         getAllBreeds().then(
           data => this.setState({allBreeds: data.message, loaded: true})
@@ -66,10 +63,8 @@ export default class App extends Component {
     switch(this.state.view) {
       case 'main-view':
           return this.renderMainView()
-          break;
       case 'favorites':
         return this.renderFavorites()
-        break;
       default:
         return this.noShowView()
   }
@@ -80,7 +75,7 @@ export default class App extends Component {
   }
 
   renderFavorites = () => {
-    const {chosenBreed, data, favorites} = this.state
+    const {chosenBreed, favorites} = this.state
     if(favorites){
       return <BreedList removeFromData={this.removeFromData} breedName={chosenBreed} data={favorites} favorites={favorites}/>
     }
@@ -89,9 +84,9 @@ export default class App extends Component {
 
   noShowView = () => {
     return( 
-    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '10px'}}>
-      <img width='300px' src='https://static.boredpanda.com/blog/wp-content/uploads/2018/04/sad-dog-madame-eyebrows-english-bulldog-14.gif'/>
-      <div>There are currently no breeds caught.Search above to catch some!</div>
+    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: '100px'}}>
+      <div>There are currently no breeds caught. Search above to catch some!</div>
+      <img alt='sad dog' style={{boxShadow: '3px 4px 18px 0px rgba(213,242,242,1)'}} width='300px' src='https://static.boredpanda.com/blog/wp-content/uploads/2018/04/sad-dog-madame-eyebrows-english-bulldog-14.gif'/>
     </div>
     )
   }
@@ -101,7 +96,9 @@ export default class App extends Component {
   }
 
   loadBreedLinks = (breedName) => {
-    this.state.loaded ? this.setState({loaded: false}) : null
+    if(this.state.loaded){
+      this.setState({loaded: false})
+    }
     getChosenBreed(breedName).then(
       data => this.setState({data: data.message, loaded: true})
     ).catch(reason => console.log(reason.message))
@@ -117,17 +114,23 @@ export default class App extends Component {
     this.setState({view: view})
   }
   addToFavorites = (link) => {
-    const newFavs = [...this.state.favorites]
-    newFavs.push(link)
-    console.log(newFavs)
+    const newFavs = [...this.state.favorites, link]
     this.setState({favorites: newFavs})
   }
 
   removeFromData = (i) => {
-    const dataCopy = [...this.state.data]
-    dataCopy.splice(i,1)
-    this.setState({data: dataCopy})
+    if (this.state.favorites.includes(this.state.data[i])){
+      const favoriteArray = this.arrayWithIndexRemoved(this.state.favorites, i)
+      this.setState({favorites: favoriteArray})
+    }
+    const dataArray = this.arrayWithIndexRemoved(this.state.data, i)
+    this.setState({data: dataArray})
+    
+  }
+
+  arrayWithIndexRemoved = (array, index) => {
+    const copy = [...array]
+    copy.splice(index, 1)
+    return copy
   }
 }
-
-
