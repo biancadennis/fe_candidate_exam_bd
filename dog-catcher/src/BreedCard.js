@@ -20,6 +20,8 @@ const imageStyle = (url) => {
   })
 }
 const buttonStyle = {
+  width: '100%',
+  paddingTop: '10px',
   display: 'flex',
   justifyContent: 'space-around',
 }
@@ -31,7 +33,7 @@ export default class BreedCard extends Component {
     return (
       <div style={cardStyle}>
         <div style={imageStyle(url)}></div>
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <div>{breedName}</div>
           <div style={buttonStyle}>
             <Button onClick={() => addToFavorites(url)} disabled={inFavorites}> {buttonText}</Button>

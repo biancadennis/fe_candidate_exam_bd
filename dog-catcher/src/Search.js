@@ -6,13 +6,11 @@ export default class BreedList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            breed: null,
             allBreeds: props.breeds
         };
       }
     render() {
         const inputStyle = {
-            width: '50%',
             height: '25px'
         }
         const breedList = Object.keys(this.state.allBreeds)

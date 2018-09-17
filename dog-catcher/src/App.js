@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {Button} from 'react-bootstrap'
+import {Button, ButtonToolbar} from 'react-bootstrap'
 import Search from './Search'
 import BreedList from './BreedList'
+import LoadingScreen from './LoadingScreen'
 
 //ToDo:
 //create scroll to top
@@ -36,18 +37,17 @@ export default class App extends Component {
   render() {
     {if (!this.state.loaded){
       this.loadData()
-      //create better loading page
-      return <div>loading...</div>
+      return <LoadingScreen />
     }}
     
     return (
       <div>
         <Search breeds={this.state.allBreeds} chosenBreed={this.state.chosenBreed} updateChosenBreed={this.updateChosenBreed}/>
-        <div>
-        <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
-        <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
-        </div>
-        {this.chooseView()}
+        <ButtonToolbar style={{display: 'flex', justifyContent: 'center '}}>
+          <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
+          <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
+        </ButtonToolbar>
+        {this.renderView()}
       </div>
     );
   }
@@ -62,7 +62,7 @@ export default class App extends Component {
       }
   }
 
-  chooseView = () => {
+  renderView = () => {
     switch(this.state.view) {
       case 'main-view':
           return this.renderMainView()
@@ -88,7 +88,12 @@ export default class App extends Component {
   }
 
   noShowView = () => {
-    return 'There are currently no breeds caught.Search above to catch some!'
+    return( 
+    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '10px'}}>
+      <img width='300px' src='https://static.boredpanda.com/blog/wp-content/uploads/2018/04/sad-dog-madame-eyebrows-english-bulldog-14.gif'/>
+      <div>There are currently no breeds caught.Search above to catch some!</div>
+    </div>
+    )
   }
 
   updateChosenBreed = (breedName) => {
