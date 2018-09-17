@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import {Image, Col} from 'react-bootstrap'
+import Button from 'react-bootstrap/lib/Button';
 
 const cardStyle = {
   height: '300px',
   width: '300px',
-  border: '1px solid gray',
-  margin: '5px',
-  padding: '5px'
+  border: '1px solid #ABF0F0',
+  margin: '8px',
+  padding: '8px',
+  background: 'white',
+  boxShadow: '3px 4px 18px 0px rgba(213,242,242,1)'
 }
 const imageStyle = (url) => {
   return({
@@ -17,12 +19,25 @@ const imageStyle = (url) => {
     backgroundPostion:'center center'
   })
 }
+const buttonStyle = {
+  display: 'flex',
+  justifyContent: 'space-around',
+}
 export default class BreedCard extends Component {
   render() {
+    const {favorites, addToFavorites, url, breedName, removeFromData, index} = this.props
+    const inFavorites = favorites.includes(url)
+    const buttonText = inFavorites ? 'In Favorites' : 'Save to Favorites'
     return (
       <div style={cardStyle}>
-        <div style={imageStyle(this.props.url)}></div>
-        <div>{this.props.breedName}</div>
+        <div style={imageStyle(url)}></div>
+        <div>
+          <div>{breedName}</div>
+          <div style={buttonStyle}>
+            <Button onClick={() => addToFavorites(url)} disabled={inFavorites}> {buttonText}</Button>
+            <Button bsStyle="danger" onClick={()=>removeFromData(index)}>Delete</Button>
+          </div>
+        </div>
       </div>
     );
   }

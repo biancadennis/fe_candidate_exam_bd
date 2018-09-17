@@ -3,8 +3,10 @@ import {Button} from 'react-bootstrap'
 import Search from './Search'
 import BreedList from './BreedList'
 
+//ToDo:
 //create scroll to top
-//create object to handle this better
+//OOP
+
 async function getAllBreeds() {
   //need to be able to pass in url
   const response = await fetch('https://dog.ceo/api/breeds/list/all')
@@ -26,7 +28,9 @@ export default class App extends Component {
       loaded: false,
       allBreeds: null,
       data: null,
-      chosenBreed: ''
+      chosenBreed: '',
+      favorites: [],
+      view: 'no-show'
     };
   }
   render() {
@@ -35,12 +39,15 @@ export default class App extends Component {
       //create better loading page
       return <div>loading...</div>
     }}
-
+    
     return (
       <div>
         <Search breeds={this.state.allBreeds} chosenBreed={this.state.chosenBreed} updateChosenBreed={this.updateChosenBreed}/>
+        <div>
         <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
-        {this.renderMainView()}
+        <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
+        </div>
+        {this.chooseView()}
       </div>
     );
   }
@@ -48,22 +55,44 @@ export default class App extends Component {
   
   loadData = () => {
    this.state.loaded ? this.setState({loaded:false}) : null
-   if(!this.state.chosenBreed){
-    getAllBreeds().then(
-      data => this.setState({allBreeds: data.message, loaded: true})
-    ).catch(reason => console.log(reason.message))
-  }
+    if(!this.state.chosenBreed){
+        getAllBreeds().then(
+          data => this.setState({allBreeds: data.message, loaded: true})
+        ).catch(reason => console.log(reason.message))
+      }
   }
 
+  chooseView = () => {
+    switch(this.state.view) {
+      case 'main-view':
+          return this.renderMainView()
+          break;
+      case 'favorites':
+        return this.renderFavorites()
+        break;
+      default:
+        return this.noShowView()
+  }
+  }
   renderMainView = () => {
-    const {chosenBreed, data} = this.state
-    if(this.state.chosenBreed){
-      return <BreedList breedName={chosenBreed} data={data}/>
+    const {chosenBreed, data, favorites} = this.state
+    return <BreedList removeFromData={this.removeFromData} addToFavorites={this.addToFavorites} breedName={chosenBreed} data={data} favorites={favorites}/>
+  }
+
+  renderFavorites = () => {
+    const {chosenBreed, data, favorites} = this.state
+    if(favorites){
+      return <BreedList removeFromData={this.removeFromData} breedName={chosenBreed} data={favorites} favorites={favorites}/>
     }
+    this.noShowView()
+  }
+
+  noShowView = () => {
     return 'There are currently no breeds caught.Search above to catch some!'
   }
+
   updateChosenBreed = (breedName) => {
-    this.setState({chosenBreed: breedName}, this.loadBreedLinks(breedName))
+    this.setState({chosenBreed: breedName, view:'main-view'}, this.loadBreedLinks(breedName))
   }
 
   loadBreedLinks = (breedName) => {
@@ -77,7 +106,22 @@ export default class App extends Component {
     const breeds = Object.keys(this.state.allBreeds)
     const index = Math.floor(Math.random() * breeds.length)
     const newBreed = breeds[index]
-    this.setState({chosenBreed: newBreed}, this.loadBreedLinks(newBreed))
+    this.setState({chosenBreed: newBreed, view: 'main-view'}, this.loadBreedLinks(newBreed))
+  }
+  setView = (view) => {
+    this.setState({view: view})
+  }
+  addToFavorites = (link) => {
+    const newFavs = [...this.state.favorites]
+    newFavs.push(link)
+    console.log(newFavs)
+    this.setState({favorites: newFavs})
+  }
+
+  removeFromData = (i) => {
+    const dataCopy = [...this.state.data]
+    dataCopy.splice(i,1)
+    this.setState({data: dataCopy})
   }
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Downshift from 'downshift'
+import {FormControl} from 'react-bootstrap'
 
 export default class BreedList extends Component {
     constructor(props) {
@@ -10,6 +11,10 @@ export default class BreedList extends Component {
         };
       }
     render() {
+        const inputStyle = {
+            width: '50%',
+            height: '25px'
+        }
         const breedList = Object.keys(this.state.allBreeds)
         return(
             <Downshift
@@ -25,7 +30,7 @@ export default class BreedList extends Component {
                     highlightedIndex,
                 }) => (
                     <div>
-                        <input {...getInputProps()} value={this.state.chosenBreed} placeholder={'Enter a Breed to Catch'} />
+                        <FormControl {...getInputProps()}  style={inputStyle} value={this.state.chosenBreed} placeholder={'Enter a Breed to Catch'} />
                         <ul {...getMenuProps()}>
                             {isOpen && inputValue
                                 ? breedList
