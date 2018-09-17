@@ -136,7 +136,8 @@ export default class App extends Component {
   removeFromData = (i) => {
     const urls = this.state.favorites.map(breed => breed.url)
     if (urls.includes(this.state.data[i].url)){
-      const favoriteArray = this.arrayWithIndexRemoved(this.state.favorites, i)
+      const index = urls.indexOf(this.state.data[i].url)
+      const favoriteArray = this.arrayWithIndexRemoved(this.state.favorites, index)
       this.setState({favorites: favoriteArray})
     }
     const dataArray = this.arrayWithIndexRemoved(this.state.data, i)
