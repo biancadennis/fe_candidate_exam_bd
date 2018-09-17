@@ -63,22 +63,18 @@ export default class App extends Component {
   renderView = () => {
     switch(this.state.view) {
       case 'main-view':
-          return this.renderMainView()
+          return <BreedList view={this.state.view} removeFromData={this.removeFromData} addToFavorites={this.addToFavorites} breedName={this.state.chosenBreed} data={this.state.data} favorites={this.state.favorites}/>
       case 'favorites':
         return this.renderFavorites()
       case 'no-show':
         return this.noShowView()
       default:
         return <LoadingScreen />
-  }
-  }
-  renderMainView = () => {
-    const {chosenBreed, data, favorites, view} = this.state
-    return <BreedList view={view} removeFromData={this.removeFromData} addToFavorites={this.addToFavorites} breedName={chosenBreed} data={data} favorites={favorites}/>
+    }
   }
 
   renderFavorites = () => {
-    const {chosenBreed, favorites, view} = this.state
+    const {chosenBreed, favorites} = this.state
     if(favorites){
       return <BreedList view={'favorites'} removeFromData={this.removeFromData} breedName={chosenBreed} data={favorites} favorites={favorites}/>
     }
@@ -134,11 +130,10 @@ export default class App extends Component {
   }
 
   removeFromData = (i) => {
-    const urls = this.state.favorites.map(breed => breed.url)
-    if (urls.includes(this.state.data[i].url)){
-      const index = urls.indexOf(this.state.data[i].url)
-      const favoriteArray = this.arrayWithIndexRemoved(this.state.favorites, index)
-      this.setState({favorites: favoriteArray})
+    if(this.state.view === 'favorites'){
+      const urls = this.state.favorites.map(breed => breed.url)
+      const newFavs = this.arrayWithIndexRemoved(this.state.favorites, i)
+      this.setState({favorites: newFavs})
     }
     const dataArray = this.arrayWithIndexRemoved(this.state.data, i)
     this.setState({data: dataArray})
