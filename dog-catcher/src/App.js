@@ -41,7 +41,7 @@ export default class App extends Component {
         <ButtonToolbar style={{display: 'flex', justifyContent: 'center '}}>
           <Button onClick={this.getRandomBreed}>+ Catch A Random Breed </Button>
           <Button onClick={() => this.setView('favorites')}>View Favorites </Button>
-          <Button bsStyle='danger' onClick={() => this.setView('no-show')}>Clear </Button>
+          <Button bsStyle='danger' onClick={() => this.clearBreeds()}>Clear </Button>
         </ButtonToolbar>
         {this.renderView()}
       </div>
@@ -129,6 +129,9 @@ export default class App extends Component {
     this.setState({favorites: newFavs})
   }
 
+  clearBreeds = () => {
+    this.setState({data: [], view: 'no-show'})
+  }
   removeFromData = (i) => {
     if(this.state.view === 'favorites'){
       const urls = this.state.favorites.map(breed => breed.url)
